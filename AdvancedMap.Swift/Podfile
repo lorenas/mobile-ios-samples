@@ -1,9 +1,8 @@
-platform :ios, '9.0'
+platform :ios, '13.0'
 source 'https://github.com/CocoaPods/Specs.git'
 
 target 'AdvancedMap.Swift' do
-  pod 'CartoMobileSDK', '4.4.0'
-  pod 'HockeySDK', '5.0.0'
+  pod 'CartoMobileSDK', '4.4.5'
   
   use_frameworks!
 end

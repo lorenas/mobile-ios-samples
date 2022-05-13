@@ -13,6 +13,10 @@ import CoreLocation
 class GPSLocationController : BaseController, CLLocationManagerDelegate, RotationDelegate {
     
     var contentView: GPSLocationView!
+    var container: UIView!
+    var button: UIButton!
+    
+    var containerHeightConstraint: NSLayoutConstraint!
     
     var manager: CLLocationManager!
     
@@ -22,7 +26,37 @@ class GPSLocationController : BaseController, CLLocationManagerDelegate, Rotatio
         super.viewDidLoad()
         
         contentView = GPSLocationView()
-        view = contentView
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(contentView)
+        
+        container = UIView()
+        container.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(container)
+        
+        button = UIButton(type: .custom)
+        button.tintColor = .red
+        button.addTarget(self, action: #selector(buttonWasTapped), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Press me to resize", for: .normal)
+        button.setTitleColor(.red, for: .normal)
+        
+        container.addSubview(button)
+        
+        containerHeightConstraint = container.heightAnchor.constraint(equalToConstant: 300)
+        
+        NSLayoutConstraint.activate([
+            contentView.topAnchor.constraint(equalTo: container.bottomAnchor),
+            contentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            container.topAnchor.constraint(equalTo: view.topAnchor),
+            container.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            container.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            containerHeightConstraint,
+            button.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            button.bottomAnchor.constraint(equalTo: container.bottomAnchor),
+            button.heightAnchor.constraint(equalToConstant: 30)
+        ])
         
         rotationListener = RotationListener()
         rotationListener?.map = contentView.map
@@ -45,6 +79,19 @@ class GPSLocationController : BaseController, CLLocationManagerDelegate, Rotatio
         contentView.addBanner(visible: true)
         let text = "Click the tracking icon if you wish to turn off tracking"
         contentView.banner.showInformation(text: text, autoclose: true)
+    }
+    
+    @objc func buttonWasTapped() {
+        let willReduceSize = containerHeightConstraint.constant == 300
+        
+        if #available(iOS 10.0, *) {
+            UIViewPropertyAnimator(duration: 0.3, curve: willReduceSize ? .easeIn : .easeOut) {
+                self.containerHeightConstraint.constant = willReduceSize ? 150 : 300
+                self.view.layoutIfNeeded()
+            }.startAnimation()
+        } else {
+            // Fallback on earlier versions
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {

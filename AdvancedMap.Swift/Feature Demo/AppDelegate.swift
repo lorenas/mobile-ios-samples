@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import HockeySDK
 import CartoMobileSDK
 
 @UIApplicationMain
@@ -43,9 +42,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Languages.initialize()
         Cities.initialize()
         MapOptions.initialize()
-        
-        BITHockeyManager.shared().configure(withIdentifier: identifier)
-        BITHockeyManager.shared().start()
 
         NTLog.setShowError(true)
         NTLog.setShowDebug(true)
